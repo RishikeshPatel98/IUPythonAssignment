@@ -1,0 +1,108 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Step 1: Load the dataset
+dataset_name = 'ideal_3.csv'
+df = pd.read_csv(dataset_name)
+
+# Step 2: Get an overview of the data
+print("----- Overview of the dataset -----")
+print(df.info())
+print(df.head())
+
+# Step 3: Summary statistics
+print("\n----- Summary Statistics -----")
+print(df.describe())
+
+# Step 4: Data Visualization
+
+# 4.1 Univariate Analysis - Histograms
+print("\n----- Univariate Analysis - Histograms -----")
+for column in df.columns:
+    plt.hist(df[column])
+    plt.title(f"Histogram of {column}")
+    plt.xlabel(column)
+    plt.ylabel("Frequency")
+    plt.show()
+
+# 4.3 Correlation Matrix
+print("\n----- Correlation Matrix -----")
+correlation_matrix = df.corr()
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
+plt.title("Correlation Matrix")
+plt.show()
+
+# Step 5: Detecting Outliers (Optional)
+print("\n----- Detecting Outliers -----")
+# For simplicity, we will use the Tukey method to identify outliers in each column.
+# You may choose a different method depending on your data and context.
+Q1 = df.quantile(0.25)
+Q3 = df.quantile(0.75)
+IQR = Q3 - Q1
+outliers = ((df < (Q1 - 1.5 * IQR)) | (df > (Q3 + 1.5 * IQR))).any(axis=1)
+print(df[outliers])
+
+
+# Step 6: Handling Missing Values (Optional)
+print("\n----- Handling Missing Values -----")
+# Check for missing values in each column
+print(df.isnull().sum())
+
+
+
+Descriptive Analysis
+print("----- Descriptive Analysis -----")
+print("Summary statistics:")
+print(df.describe())
+print("\nCorrelation between features:")
+print(df.corr())
+
+# Diagnostic Analysis
+print("\n----- Diagnostic Analysis -----")
+# Example: Perform a simple regression analysis to identify relationships between 'x' and 'y1'
+X = df[['x']]
+y = df['y1']
+model = LinearRegression()
+model.fit(X, y)
+slope = model.coef_[0]
+intercept = model.intercept_
+print(f"Regression equation: y1 = {slope:.2f} * x + {intercept:.2f}")
+
+
+# Step : Predictive Analysis
+print("\n----- Predictive Analysis -----")
+# Assuming we want to predict 'y1' using 'x' as the independent variable
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+print("Predicted values for y1:")
+print(y_pred)
+
+# Assuming we want to predict 'y1' using 'x' as the independent variable
+X = df[['x']]
+y = df['y1']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = LinearRegression()
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+
+
+print("\n----- Prescriptive Analysis -----")
+# Assuming a simple threshold-based recommendation
+threshold = 50  # Example threshold value
+
+# Decision Rule
+recommendations = []
+for pred_value in y_pred:
+    if pred_value > threshold:
+        recommendations.append("Increase investment")
+    else:
+        recommendations.append("Maintain current investment")
+
+# Add the recommendations to the test data and display the results
+prescriptive_df = X_test.copy()
+prescriptive_df['Predicted_y1'] = y_pred
+prescriptive_df['Recommendation'] = recommendations
+print(prescriptive_df)
